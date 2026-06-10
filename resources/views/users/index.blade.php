@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>User List</title>
 
-    @vite(['resources/css/userlist.css', 'resources/js/app.js'])
+    @vite(['resources/css/user-list.css', 'resources/js/app.js'])
 </head>
 
 <body>

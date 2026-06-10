@@ -5,7 +5,7 @@
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Create User</title>
 
-    @vite(['resources/css/users.css', 'resources/js/app.js'])
+    @vite(['resources/css/user.css', 'resources/js/app.js'])
 </head>
 
 <body>

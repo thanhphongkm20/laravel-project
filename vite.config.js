@@ -9,7 +9,9 @@ export default defineConfig({
             input: [
                 "resources/css/app.css",
                 "resources/css/userlist.css",
-                "resources/css/users.css",
+                "resources/css/user.css",
+                "resources/css/user-detail.css",
+                "resources/css/user-edit.css",
                 "resources/js/app.js",
             ],
             refresh: true,

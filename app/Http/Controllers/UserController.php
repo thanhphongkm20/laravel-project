@@ -32,9 +32,13 @@ class UserController extends Controller
         ]);
     }
 
-    public function index()
+    public function index(Request $request)
     {
         $users = User::orderBy('id', 'desc')->get();
+
+        if ($request->is('api/*')) {
+            return response()->json($users);
+        }
 
         return view('users.index', compact('users'));
     }
@@ -57,15 +61,21 @@ class UserController extends Controller
 
         $user = User::create($validated);
 
-        if ($request->wantsJson()) {
+        if ($request->is('api/*')) {
             return response()->json($user, 201);
         }
 
-        return redirect()->route('users.index')->with('success', 'User created successfully.');
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'User created successfully.');
     }
 
-    public function show(User $user)
+    public function show(Request $request, User $user)
     {
+        if ($request->is('api/*')) {
+            return response()->json($user);
+        }
+
         return view('users.show', compact('user'));
     }
 
@@ -91,13 +101,27 @@ class UserController extends Controller
 
         $user->update($validated);
 
-        return redirect()->route('users.index')->with('success', 'User updated successfully.');
+        if ($request->is('api/*')) {
+            return response()->json($user);
+        }
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'User updated successfully.');
     }
 
-    public function destroy(User $user)
+    public function destroy(Request $request, User $user)
     {
         $user->delete();
 
-        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
+        if ($request->is('api/*')) {
+            return response()->json([
+                'message' => 'User deleted successfully.',
+            ]);
+        }
+
+        return redirect()
+            ->route('users.index')
+            ->with('success', 'User deleted successfully.');
     }
 }

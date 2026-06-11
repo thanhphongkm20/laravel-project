@@ -4,11 +4,33 @@ namespace App\Http\Controllers;
 
 use App\Models\User;
 use Illuminate\Http\Request;
-use Illuminate\Http\RedirectResponse;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 
 class UserController extends Controller
 {
+    public function loginPage()
+    {
+        return view('welcome');
+    }
+
+    public function login(Request $request)
+    {
+        $data = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
+
+        if (Auth::attempt($data)) {
+            $request->session()->regenerate();
+
+            return redirect()->route('users.index');
+        }
+
+        return back()->withErrors([
+            'email' => 'Email hoặc mật khẩu sai.',
+        ]);
+    }
 
     public function index()
     {
@@ -17,6 +39,10 @@ class UserController extends Controller
         return view('users.index', compact('users'));
     }
 
+    public function create()
+    {
+        return view('users.create');
+    }
 
     public function store(Request $request)
     {
@@ -27,6 +53,8 @@ class UserController extends Controller
             'phone' => 'nullable|string|max:20',
         ]);
 
+        $validated['password'] = Hash::make($validated['password']);
+
         $user = User::create($validated);
 
         if ($request->wantsJson()) {
@@ -35,13 +63,6 @@ class UserController extends Controller
 
         return redirect()->route('users.index')->with('success', 'User created successfully.');
     }
-
-
-    public function create(): \Illuminate\Contracts\View\View
-    {
-        return view('users.create');
-    }
-
 
     public function show(User $user)
     {
@@ -73,13 +94,10 @@ class UserController extends Controller
         return redirect()->route('users.index')->with('success', 'User updated successfully.');
     }
 
-
     public function destroy(User $user)
     {
         $user->delete();
 
-        return [
-            "message"=>"Deleted"
-        ];
+        return redirect()->route('users.index')->with('success', 'User deleted successfully.');
     }
 }

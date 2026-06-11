@@ -32,6 +32,27 @@ class UserController extends Controller
         ]);
     }
 
+    public function apiLogin(Request $request)
+        {
+            $validated = $request->validate([
+                'email' => 'required|email',
+                'password' => 'required',
+            ]);
+
+            $user = User::where('email', $validated['email'])->first();
+
+            if (!$user || !Hash::check($validated['password'], $user->password)) {
+                return response()->json([
+                    'message' => 'Invalid credentials',
+                ], 401);
+            }
+
+            return response()->json([
+                'message' => 'Login successful',
+                'user' => $user,
+            ]);
+        }
+
     public function index(Request $request)
     {
         $users = User::orderBy('id', 'desc')->get();

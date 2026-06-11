@@ -8,7 +8,7 @@ export default defineConfig({
         laravel({
             input: [
                 "resources/css/app.css",
-                "resources/css/userlist.css",
+                "resources/css/user-list.css",
                 "resources/css/user.css",
                 "resources/css/user-detail.css",
                 "resources/css/user-edit.css",

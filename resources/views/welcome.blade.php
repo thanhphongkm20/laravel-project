@@ -38,12 +38,12 @@
 
             <div class="form-group">
                 <label>Email address</label>
-                <input type="email" name="email" placeholder="admin@gmail.com" required>
+                <input type="email" name="email" placeholder="Enter your email" autocomplete="off" required>
             </div>
 
             <div class="form-group">
                 <label>Password</label>
-                <input type="password" name="password" placeholder="••••••••" required>
+                <input type="password" name="password" placeholder="••••••••" autocomplete="new-password" required>
             </div>
 
             <button type="submit">Login</button>

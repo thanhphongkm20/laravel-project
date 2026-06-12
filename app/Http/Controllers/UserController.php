@@ -115,12 +115,12 @@ class UserController extends Controller
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
-            'password' => 'nullable|string|min:8|confirmed',
+            'password' => 'nullable|string|min:8',
             'role' => ['required', Rule::in(array_keys(User::roles()))],
         ]);
 
-        if (!empty($validated['password'])) {
-            $validated['password'] = Hash::make($validated['password']);
+        if ($request->filled('password')) {
+            $validated['password'] = Hash::make($request->password);
         } else {
             unset($validated['password']);
         }

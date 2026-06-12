@@ -6,6 +6,7 @@ use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Validation\Rule;
 
 class UserController extends Controller
 {
@@ -33,29 +34,31 @@ class UserController extends Controller
     }
 
     public function apiLogin(Request $request)
-        {
-            $validated = $request->validate([
-                'email' => 'required|email',
-                'password' => 'required',
-            ]);
+    {
+        $validated = $request->validate([
+            'email' => 'required|email',
+            'password' => 'required',
+        ]);
 
-            $user = User::where('email', $validated['email'])->first();
+        $user = User::where('email', $validated['email'])->first();
 
-            if (!$user || !Hash::check($validated['password'], $user->password)) {
-                return response()->json([
-                    'message' => 'Invalid credentials',
-                ], 401);
-            }
-
+        if (!$user || !Hash::check($validated['password'], $user->password)) {
             return response()->json([
-                'message' => 'Login successful',
-                'user' => $user,
-            ]);
+                'message' => 'Invalid credentials',
+            ], 401);
         }
+
+        return response()->json([
+            'message' => 'Login successful',
+            'user' => $user,
+        ]);
+    }
 
     public function index(Request $request)
     {
-        $users = User::orderBy('id', 'desc')->get();
+        $users = User::where('role', User::ROLE_USER)
+            ->orderBy('id', 'desc')
+            ->get();
 
         if ($request->is('api/*')) {
             return response()->json($users);
@@ -76,6 +79,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email',
             'password' => 'required|string|min:8|confirmed',
             'phone' => 'nullable|string|max:20',
+            'role' => ['required', Rule::in(array_keys(User::roles()))],
         ]);
 
         $validated['password'] = Hash::make($validated['password']);
@@ -112,6 +116,7 @@ class UserController extends Controller
             'email' => 'required|email|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
             'password' => 'nullable|string|min:8|confirmed',
+            'role' => ['required', Rule::in(array_keys(User::roles()))],
         ]);
 
         if (!empty($validated['password'])) {

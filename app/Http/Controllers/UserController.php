@@ -111,13 +111,18 @@ class UserController extends Controller
 
     public function update(Request $request, User $user)
     {
-        $validated = $request->validate([
+        $rules = [
             'name' => 'required|string|max:255',
             'email' => 'required|email|unique:users,email,' . $user->id,
             'phone' => 'nullable|string|max:20',
-            'password' => 'nullable|string|min:8',
-            'role' => ['required', Rule::in(array_keys(User::roles()))],
-        ]);
+            'password' => 'nullable|string|min:8|confirmed',
+        ];
+
+        if ($request->has('role')) {
+            $rules['role'] = ['required', Rule::in(array_keys(User::roles()))];
+        }
+
+        $validated = $request->validate($rules);
 
         if ($request->filled('password')) {
             $validated['password'] = Hash::make($request->password);

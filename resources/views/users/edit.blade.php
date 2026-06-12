@@ -14,6 +14,15 @@
             USER MANAGEMENT
         </div>
         <h1>Edit User</h1>
+        @if ($errors->any())
+            <div class="errors">
+                <ul>
+                    @foreach ($errors->all() as $error)
+                        <li>{{ $error }}</li>
+                    @endforeach
+                </ul>
+            </div>
+        @endif
         <p class="desc">
             Update user information including name, email address and phone number.
         </p>

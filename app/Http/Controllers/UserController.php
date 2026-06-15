@@ -3,9 +3,11 @@
 namespace App\Http\Controllers;
 
 use App\Models\User;
+use App\Notifications\UserUpdated;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Notification;
 use Illuminate\Validation\Rule;
 
 class UserController extends Controller
@@ -60,11 +62,22 @@ class UserController extends Controller
             ->orderBy('id', 'desc')
             ->get();
 
+        $notifications = [];
+        $unreadCount = 0;
+
+        if ($request->user()?->isAdmin()) {
+            $notifications = $request->user()->notifications()
+                ->latest()
+                ->take(5)
+                ->get();
+            $unreadCount = $request->user()->unreadNotifications()->count();
+        }
+
         if ($request->is('api/*')) {
             return response()->json($users);
         }
 
-        return view('users.index', compact('users'));
+        return view('users.index', compact('users', 'notifications', 'unreadCount'));
     }
 
     public function create()
@@ -132,8 +145,15 @@ class UserController extends Controller
 
         $user->update($validated);
 
+        $updatedByName = Auth::check() ? Auth::user()->name : 'Hệ thống';
+        $admins = User::where('role', User::ROLE_ADMIN)->get();
+        Notification::send($admins, new UserUpdated($user, $updatedByName));
+
         if ($request->is('api/*')) {
-            return response()->json($user);
+            return response()->json([
+                'message' => 'User updated successfully. Admin has been notified.',
+                'data' => $user,
+            ]);
         }
 
         return redirect()

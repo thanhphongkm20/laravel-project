@@ -23,6 +23,7 @@
                 autocomplete="off"
             >
                 @csrf
+                <input type="hidden" name="role" value="user">
                 <input
                     type="text"
                     name="fake_username"

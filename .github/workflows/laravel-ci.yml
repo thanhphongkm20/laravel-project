@@ -42,6 +42,16 @@ jobs:
     - name: Directory Permissions
       run: chmod -R 777 storage bootstrap/cache
 
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '20'
+
+    - name: Install NPM Dependencies & Build Assets
+      run: |
+        npm ci
+        npm run build
+
     - name: Wait for MySQL
       run: |
         until nc -z -v -w30 127.0.0.1 3306; do

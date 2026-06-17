@@ -86,9 +86,6 @@
             @endif
 
             <div class="table-card">
-                <div class="table-header">
-                    <span>{{ $users->count() }} users</span>
-                </div>
 
                 <table class="user-table">
                     <thead>
